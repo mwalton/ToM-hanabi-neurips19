@@ -1,0 +1,21 @@
+*.pyc
+.vscode/
+logs/
+checkpoints/
+.DS_Store
+.cd.swp
+.ipynb_checkpoints/
+results/
+webplot_results/
+
+#cmake output files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+game_example
+hanabi_lib/CMakeFiles/
+hanabi_lib/Makefile
+hanabi_lib/cmake_install.cmake
+hanabi_lib/libhanabi.a
+libpyhanabi.so
