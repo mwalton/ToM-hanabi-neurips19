@@ -8,6 +8,9 @@ checkpoints/
 results/
 webplot_results/
 
+.floyd*
+floyd.yml
+
 #cmake output files
 CMakeCache.txt
 CMakeFiles/

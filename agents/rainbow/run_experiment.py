@@ -355,7 +355,7 @@ def run_one_episode(agent, environment, obs_stacker, belief_model):
   agent.end_episode(reward_since_last_action)
 
   move_counter = dict(Counter([move.move().to_dict()['action_type'] for move in environment.state.move_history()]))
-  tf.logging.info('EPISODE: %d %g %g %s', step_number, total_reward, total_comms_reward, str(move_counter))
+  tf.logging.info('EPISODE: %d REW: %g COMMS: %g', step_number, total_reward, total_comms_reward)
   
   if agent.eval_mode:
     return step_number, total_reward
@@ -438,6 +438,7 @@ def run_one_iteration(agent, environment, obs_stacker, belief_model,
 
   average_return = sum_returns / num_episodes
   tf.logging.info('Average per episode return: %.2f', average_return)
+  print('{{"metric": "return", "value": {}}}'.format(average_return))
   statistics.append({'average_return': average_return})
 
   # Also run an evaluation phase if desired.

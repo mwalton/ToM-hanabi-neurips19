@@ -70,7 +70,7 @@ flags.DEFINE_integer('num_iterations', 20000, 'Number of training iterations to 
 flags.DEFINE_integer('belief_level', -1, "Theory of mind belief level; -1: vanilla agent (no belief) 0: my belief about my hand 1: my belief about your belief about your hand")
 flags.DEFINE_string('belief_mode', 'replace', "concat: append belief to obs vector. replace: replace partial knowledge components w/ belief")
 flags.DEFINE_integer('n_b0_samples', 1, "Number of samples to draw from b0 to estimate b1; if 1 sample, most likely hand will be sampled")
-flags.DEFINE_bool('comms_reward', False, "Provide agent with incentive to minimize divergence between other agents' belief and their hand")
+flags.DEFINE_bool('comms_reward', True, "Provide agent with incentive to minimize divergence between other agents' belief and their hand")
 flags.DEFINE_float('beta', 0., "weight associated with intrinstic communication reward")
 
 def launch_experiment():
