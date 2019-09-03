@@ -2,6 +2,7 @@
 .vscode/
 logs/
 checkpoints/
+incremental/
 .DS_Store
 .cd.swp
 .ipynb_checkpoints/

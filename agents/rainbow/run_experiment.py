@@ -501,6 +501,24 @@ def checkpoint_experiment(experiment_checkpointer, agent, experiment_logger,
       agent_dictionary['logs'] = experiment_logger.data
       experiment_checkpointer.save_checkpoint(iteration, agent_dictionary)
 
+def do_eval(agent, environment, obs_stacker, belief_model, num_evaluation_games=1000):
+  statistics = iteration_statistics.IterationStatistics()
+  episode_data = []
+  agent.eval_mode = True
+  # Collect episode data for all games.
+  for _ in range(num_evaluation_games):
+    episode_data.append(run_one_episode(agent, environment, obs_stacker, belief_model))
+
+  eval_episode_length, eval_episode_return = map(np.mean, zip(*episode_data))
+
+  statistics.append({
+      'eval_episode_lengths': eval_episode_length,
+      'eval_episode_returns': eval_episode_return
+  })
+  tf.logging.info('Average eval. episode length: %.2f  Return: %.2f',
+                  eval_episode_length, eval_episode_return)
+  return statistics.data_lists
+
 
 @gin.configurable
 def run_experiment(agent,
@@ -515,12 +533,22 @@ def run_experiment(agent,
                    training_steps=5000,
                    logging_file_prefix='log',
                    log_every_n=1,
-                   checkpoint_every_n=1):
+                   checkpoint_every_n=1,
+                   mode='train'):
   """Runs a full experiment, spread over multiple iterations."""
   tf.logging.info('Beginning training...')
   if num_iterations <= start_iteration:
     tf.logging.warning('num_iterations (%d) < start_iteration(%d)',
                        num_iterations, start_iteration)
+    return
+  
+  if mode is 'eval':
+    start_time = time.time()
+    statistics = do_eval(agent, environment, obs_stacker, belief_model, 1000)
+    log_experiment(experiment_logger, start_iteration, statistics,
+                   logging_file_prefix, log_every_n)
+    tf.logging.info('Evaluation iteration took %d seconds',
+                    time.time() - start_time)
     return
 
   for iteration in range(start_iteration, num_iterations):

@@ -64,14 +64,15 @@ flags.DEFINE_string('tf_device', '/gpu:*', "Device to run model on")
 # It looks like hist_size still stacks the default 4 obs tho (inconsistent w/ paper)
 flags.DEFINE_integer('history_size', 1, 'History length to stack (handle partial obs, default 4 evidently motivated by atari)')
 
-flags.DEFINE_integer('checkpoint_every_n', 100, 'How frequently to checkpoint model, careful w/ this takes several seconds')
+flags.DEFINE_integer('checkpoint_every_n', 1, 'How frequently to checkpoint model, careful w/ this takes several seconds')
 flags.DEFINE_integer('log_every_n', 1, 'How frequently to save logfile')
 flags.DEFINE_integer('num_iterations', 20000, 'Number of training iterations to run')
-flags.DEFINE_integer('belief_level', -1, "Theory of mind belief level; -1: vanilla agent (no belief) 0: my belief about my hand 1: my belief about your belief about your hand")
+flags.DEFINE_integer('belief_level', 1, "Theory of mind belief level; -1: vanilla agent (no belief) 0: my belief about my hand 1: my belief about your belief about your hand")
 flags.DEFINE_string('belief_mode', 'replace', "concat: append belief to obs vector. replace: replace partial knowledge components w/ belief")
 flags.DEFINE_integer('n_b0_samples', 1, "Number of samples to draw from b0 to estimate b1; if 1 sample, most likely hand will be sampled")
 flags.DEFINE_bool('comms_reward', True, "Provide agent with incentive to minimize divergence between other agents' belief and their hand")
-flags.DEFINE_float('beta', 0., "weight associated with intrinstic communication reward")
+flags.DEFINE_float('beta', 2.0, "weight associated with intrinstic communication reward")
+flags.DEFINE_string('mode', 'eval', "train or eval; eval mode will play on-policy for 1000 games from the last checkpoint")
 
 def launch_experiment():
   """Launches the experiment.
@@ -113,7 +114,8 @@ def launch_experiment():
                                 logging_file_prefix=FLAGS.logging_file_prefix,
                                 checkpoint_every_n=FLAGS.checkpoint_every_n,
                                 log_every_n=FLAGS.log_every_n,
-                                num_iterations=FLAGS.num_iterations)
+                                num_iterations=FLAGS.num_iterations,
+                                mode=FLAGS.mode)
 
 
 def main(unused_argv):
