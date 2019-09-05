@@ -427,19 +427,20 @@ def run_one_iteration(agent, environment, obs_stacker, belief_model,
 
   statistics = iteration_statistics.IterationStatistics()
 
-  # First perform the training phase, during which the agent learns.
-  agent.eval_mode = False
-  number_steps, sum_returns, num_episodes = (
-      run_one_phase(agent, environment, obs_stacker, belief_model, training_steps, statistics,
-                    'train'))
-  time_delta = time.time() - start_time
-  tf.logging.info('Average training steps per second: %.2f',
-                  number_steps / time_delta)
+  if training_steps > 0:
+    # First perform the training phase, during which the agent learns.
+    agent.eval_mode = False
+    number_steps, sum_returns, num_episodes = (
+        run_one_phase(agent, environment, obs_stacker, belief_model, training_steps, statistics,
+                      'train'))
+    time_delta = time.time() - start_time
+    tf.logging.info('Average training steps per second: %.2f',
+                    number_steps / time_delta)
 
-  average_return = sum_returns / num_episodes
-  tf.logging.info('Average per episode return: %.2f', average_return)
-  print('{{"metric": "return", "value": {}}}'.format(average_return))
-  statistics.append({'average_return': average_return})
+    average_return = sum_returns / num_episodes
+    tf.logging.info('Average per episode return: %.2f', average_return)
+    print('{{"metric": "return", "value": {}}}'.format(average_return))
+    statistics.append({'average_return': average_return})
 
   # Also run an evaluation phase if desired.
   if evaluate_every_n is not None and iteration % evaluate_every_n == 0:
@@ -501,25 +502,6 @@ def checkpoint_experiment(experiment_checkpointer, agent, experiment_logger,
       agent_dictionary['logs'] = experiment_logger.data
       experiment_checkpointer.save_checkpoint(iteration, agent_dictionary)
 
-def do_eval(agent, environment, obs_stacker, belief_model, num_evaluation_games=1000):
-  statistics = iteration_statistics.IterationStatistics()
-  episode_data = []
-  agent.eval_mode = True
-  # Collect episode data for all games.
-  for _ in range(num_evaluation_games):
-    episode_data.append(run_one_episode(agent, environment, obs_stacker, belief_model))
-
-  eval_episode_length, eval_episode_return = map(np.mean, zip(*episode_data))
-
-  statistics.append({
-      'eval_episode_lengths': eval_episode_length,
-      'eval_episode_returns': eval_episode_return
-  })
-  tf.logging.info('Average eval. episode length: %.2f  Return: %.2f',
-                  eval_episode_length, eval_episode_return)
-  return statistics.data_lists
-
-
 @gin.configurable
 def run_experiment(agent,
                    environment,
@@ -544,11 +526,13 @@ def run_experiment(agent,
   
   if mode is 'eval':
     start_time = time.time()
-    statistics = do_eval(agent, environment, obs_stacker, belief_model, 1000)
-    log_experiment(experiment_logger, start_iteration, statistics,
-                   logging_file_prefix, log_every_n)
-    tf.logging.info('Evaluation iteration took %d seconds',
-                    time.time() - start_time)
+    for iteration in range(start_iteration, start_iteration + 1000):
+      statistics = run_one_iteration(agent, environment, obs_stacker, belief_model,
+                        iteration, 0,
+                        evaluate_every_n=1,
+                        num_evaluation_games=1)
+      log_experiment(experiment_logger, iteration, statistics,
+                    logging_file_prefix, log_every_n)
     return
 
   for iteration in range(start_iteration, num_iterations):
