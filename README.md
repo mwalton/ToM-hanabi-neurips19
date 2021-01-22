@@ -1,15 +1,12 @@
-This is not an officially supported Google product.
+# Hanabi ToM
+Implementation of recursive theory of mind belief estimation & implicit communication intrinsic rewards proposed in "Theory of Mind for Deep Reinforcement Learning in Hanabi".
 
-hanabi\_learning\_environment is a research platform for Hanabi experiments. The file rl\_env.py provides an RL environment using an API similar to OpenAI Gym. A lower level game interface is provided in pyhanabi.py for non-RL methods like Monte Carlo tree search.
-
-### Getting started
+# Citation
 ```
-sudo apt-get install g++         # if you don't already have a CXX compiler
-sudo apt-get install cmake       # if you don't already have CMake
-sudo apt-get install python-pip  # if you don't already have pip
-pip install cffi                 # if you don't already have cffi
-cmake .
-make
-python rl_env_example.py         # Runs RL episodes
-python game_example.py           # Plays a game using the lower level interface
+@article{walton2019,
+  title={Theory of Mind forDeep Reinforcement Learning in Hanabi},
+  author={Walton, Michael and Fuchs, Andrew and Chadwick, Theresa and Lange, Doug},
+  journal={NeurIPS Deep Reinforcement Learning Workshop},
+  year={2019}
+}
 ```
