@@ -1,5 +1,5 @@
 # Hanabi ToM
-Implementation of recursive theory of mind belief estimation & implicit communication intrinsic rewards proposed in [Theory of Mind for Deep Reinforcement Learning in Hanabi](https://arxiv.org/abs/2101.09328)
+Implementation of nested theory of mind belief estimation & implicit communication intrinsic rewards proposed in [Theory of Mind for Deep Reinforcement Learning in Hanabi](https://arxiv.org/abs/2101.09328)
 
 # Citation
 ```
